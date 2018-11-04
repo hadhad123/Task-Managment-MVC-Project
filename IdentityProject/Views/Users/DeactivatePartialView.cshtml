@@ -1,0 +1,15 @@
+﻿@model TaskManagment.ViewModels.UserViewModel
+<div>
+    <h2> Are you sure you want to Deactivate @Html.DisplayFor(model => model.UserName) ?</h2>
+</div>
+
+<p>
+    @Ajax.ActionLink("Confirm", "DeactivateUser", new { id = Model.ID }, new AjaxOptions()
+{
+   HttpMethod = "GET",
+   InsertionMode = InsertionMode.Replace,
+   UpdateTargetId = "list",
+}, new { @class = "btn btn-danger"}) |
+
+    @Html.ActionLink("Cancel", "Index")
+</p>

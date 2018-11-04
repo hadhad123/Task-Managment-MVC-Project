@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Model.ViewModels.UserViewModel>
+
+@{
+    ViewBag.Title = "Users ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Users</h2>
+
+<p>
+    @Html.ActionLink("Create New", "../Account/Register", new { }, new { @class = "btn btn-success" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayName("Role")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Active)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleName)
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Active)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "../Account/Register", new { id = item.ID }, new { @class = "btn btn-primary" })
+
+                @Ajax.ActionLink(item.Active?"Deactivate":"Activate", "DeactivatePartialView", new { id = item.ID }, new AjaxOptions()
+                     {
+                         HttpMethod = "POST",
+                         InsertionMode = InsertionMode.Replace,
+                         UpdateTargetId = "DeactivateBody"
+                     }, new { @class = "btn btn-danger" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+

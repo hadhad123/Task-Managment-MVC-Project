@@ -1,0 +1,124 @@
+﻿@using Model.ViewModels
+@model TaskViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Task Details</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TaskStatus.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TaskStatus.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Created by")
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Assigned to")
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AssignedUser.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Attachment")
+        </dt>
+        <dd>
+            @if (Model.File != null)
+            {
+                @Html.ActionLink(Model.File, "DownloadFile", new { id = Model.ID })
+            }
+            
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+
+    @foreach (var comment in Model.Comments)
+    {
+        if (@comment.ParentCommentID == null)
+        {
+            <div>@comment.CommentDescription</div>
+            <ul>
+
+                @foreach (var reply in comment.Replies)
+                {
+                    <li>@reply.CommentDescription</li>
+                }
+                <li>
+                    <input type="text" name="newComment" id="newReply-@comment.ID" placeholder="reply...">
+                    <button id="sendBtn" onclick="addComment('@comment.TaskID','@comment.ID','#newReply-@comment.ID')">Send</button>
+                </li>
+
+            </ul>
+        }
+
+    }
+    <input type="text" name="newComment" id="newComment-@Model.ID" placeholder="comment...">
+    <button id="sendBtn" onclick="addComment('@Model.ID',null,'#newComment-@Model.ID')">Send</button>
+</div>
+
+@section scripts
+{
+    <script>
+        debugger
+        function addComment(TaskID, ParentID, query) {
+
+            var value = $(query).first().val();
+            var CommentDescription = value;
+            var ParentID = ParentID;
+            var TaskID = TaskID;
+
+            var CommentObj =
+            {
+                CommentDescription: CommentDescription,
+                ParentID: ParentID,
+                TaskID: TaskID
+            }
+            SendAjaxRequest(CommentObj)
+
+        }
+
+        function SendAjaxRequest(CommentObj) {
+            console.log(JSON.stringify(CommentObj))
+
+            $.ajax({
+                url: '/TaskManagment/Tasks/AddComment',
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(CommentObj),
+
+                success: function (result) {
+                    console.log(result);
+                },
+
+                error: function (xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            });
+
+        }
+    </script>
+}

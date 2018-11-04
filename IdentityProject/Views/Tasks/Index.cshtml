@@ -1,0 +1,176 @@
+﻿@using Model.ViewModels
+@model IEnumerable<TaskViewModel>
+<style>
+    .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+    }
+
+        .active, .accordion:hover {
+            background-color: #ccc;
+        }
+
+        .accordion:after {
+            content: '\002B';
+            color: #777;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+    .active:after {
+        content: "\2212";
+    }
+
+    .panel {
+        padding: 0 18px;
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+</style>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Tasks</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", new {}, new { @class = "btn btn-success" })
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Task Description")
+            </th>
+            <th>
+                @Html.DisplayName("Status")
+            </th>
+            <th>
+                @Html.DisplayName("Created by")
+            </th>
+            <th>
+                @Html.DisplayName("Assigned To")
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskStatus.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AssignedUser.UserName)
+            </td>
+
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info" }) |
+                @Html.ActionLink("Edit", "Create", new { id = item.ID }, new { @class = "btn btn-primary" }) |
+
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-danger" }) |
+
+                @if (HttpContext.Current.User.IsInRole("Manager"))
+                {
+                    if (item.TaskStatus.Status != "Closed")
+                    {
+                        @Html.ActionLink("Close", "Close", new { id = item.ID }, new { @class = "btn btn-warning" })
+                    }
+                    else
+                    {
+                        <button class="btn btn-warning" disabled>Closed</button>
+                    }
+                }
+
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+@section scripts
+{
+
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+
+        function addComment(TaskID, ParentID,query) {
+
+            var value = $(query).first().val();
+            var CommentDescription = value;
+            var ParentID = ParentID;
+            var TaskID = TaskID;
+
+            var CommentObj =
+            {
+                CommentDescription: CommentDescription,
+                ParentID: ParentID,
+                TaskID: TaskID
+            }
+            console.log(CommentObj)
+            SendAjaxRequest(CommentObj)
+
+        }
+
+        function SendAjaxRequest(CommentObj) {
+            console.log(CommentObj)
+
+            $.ajax({
+                url: '/Tasks/AddComment',
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(CommentObj),
+
+                success: function (result) {
+                    console.log(result);
+                },
+
+                error: function (xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            });
+
+        }
+
+
+    </script>
+}
+
+
