@@ -5,7 +5,7 @@ MVC project that manages tasks
 2- Open Package Manager Console in Visual Studio run the following command : update-database
 
 3- Run the following Stored Procedure in your SQL Server.
-ALTER PROCEDURE [dbo].[AllTasksReport]
+Create PROCEDURE [dbo].[AllTasksReport]
 AS
 SELECT t.ID , t.Description, ts.Status , usr.UserName as Creator, assigUsr.UserName as AssignedUsere,t.[File]  FROM  Task t
 left join TaskStatus ts on t.TaskStatusID = ts.ID

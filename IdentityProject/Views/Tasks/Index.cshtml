@@ -46,7 +46,7 @@
 <h2>Tasks</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create", new {}, new { @class = "btn btn-success" })
+    @Html.ActionLink("Create New", "Create", new { }, new { @class = "btn btn-success" })
 </p>
 <table class="table table-striped">
     <thead>
@@ -67,7 +67,7 @@
             <th></th>
         </tr>
     </thead>
-    
+
 
     @foreach (var item in Model)
     {
@@ -89,7 +89,16 @@
                 @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info" }) |
                 @Html.ActionLink("Edit", "Create", new { id = item.ID }, new { @class = "btn btn-primary" }) |
 
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-danger" }) |
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-danger" })*@ |
+
+                <a class="btn btn-danger delete"
+                   data-id="@item.ID"
+                   data-controller="Tasks"
+                   data-action="Delete"
+                   data-body-message="Are you sure to delete this task?">
+                    <i class="fas fa-trash alt"></i>
+                    Delete
+                </a>
 
                 @if (HttpContext.Current.User.IsInRole("Manager"))
                 {
@@ -110,9 +119,12 @@
 
 </table>
 
-
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="~/Js/Delete.js"></script>
 
     <script>
         var acc = document.getElementsByClassName("accordion");
@@ -130,7 +142,7 @@
             });
         }
 
-        function addComment(TaskID, ParentID,query) {
+        function addComment(TaskID, ParentID, query) {
 
             var value = $(query).first().val();
             var CommentDescription = value;

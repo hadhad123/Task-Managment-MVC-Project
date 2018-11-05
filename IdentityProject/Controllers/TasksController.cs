@@ -116,5 +116,12 @@ namespace TaskManagment.Controllers
             return View("Details", Task);
         }
 
+        [HttpGet]
+        public ActionResult Delete (int ID)
+        {
+            TaskService.DeleteTask(ID);
+            return View("Index");
+        }
+
     }
 }
